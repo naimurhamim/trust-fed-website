@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustFed-SDN — Privacy-Preserving Verifiable Federated Learning for SDN</title>
+  <meta name="description"
+    content="TrustFed-SDN: A privacy-preserving and verifiable federated learning framework for cross-tenant threat detection in SDN-enabled cloud networks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+    })();
+  </script>
+</head>
+
+<body>
+
+  <div class="grain"></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <nav class="nav-links" id="navLinks">
+        <a href="#abstract" data-nav class="active">Abstract</a>
+        <a href="#methodology" data-nav>Methodology</a>
+        <a href="#workflow" data-nav>Workflow</a>
+        <a href="#references" data-nav>References</a>
+        <a href="#team" data-nav>The Team</a>
+
+        <div class="nav-divider"></div>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle light/dark mode">
+          <!-- Moon icon (shown in dark mode) -->
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <!-- Sun icon (shown in light mode) -->
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <canvas id="netCanvas" class="hero-canvas"></canvas>
+    <div class="hero-inner">
+      <!-- Proposed System Logo & Name -->
+      <div class="hero-brand-block">
+        <div class="hero-logo-frame">
+          <img src="images/logo.png" alt="TrustFed-SDN Logo" class="hero-main-logo">
+        </div>
+        <h1 class="hero-system-name">TrustFed<span class="accent-dot">-SDN</span></h1>
+      </div>
+
+      <div class="hero-badges">
+        <span class="badge">Federated Learning</span>
+        <span class="badge">Software-Defined Networking</span>
+        <span class="badge">Verifiable Aggregation</span>
+      </div>
+
+      <h2 class="hero-title">
+        A privacy-preserving, <span class="grad-text">verifiable</span> federated
+        learning framework for SDN-enabled cloud networks
+      </h2>
+
+      <p class="hero-sub">
+        TrustFed-SDN validates cross-tenant threat detection on a real
+        Mininet + OVS + RYU testbed — combining lightweight verifiable
+        aggregation, poisoning-robust training, and adaptive per-tenant
+        differential privacy in a single framework.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#abstract" class="btn btn-primary">Read the abstract</a>
+        <a href="#references" class="btn btn-ghost">View references</a>
+      </div>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Authors</span>
+          <div class="hero-meta-value">
+            <span>Pritom Kumar Bhowmik</span>
+            <span>MD Naimur Rashid</span>
+          </div>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Supervisor</span>
+          <div class="hero-meta-value">
+            <span>Saurav Chandra Das</span>
+            <span class="hero-meta-sub">Lecturer, Dept. of IRE</span>
+          </div>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Institution</span>
+          <div class="hero-meta-value">
+            <span>University of Frontier Technology, Bangladesh</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABSTRACT ============ -->
+  <section class="section" id="abstract">
+    <div class="section-inner split">
+      <div class="split-head">
+        <h2 class="section-title">Abstract</h2>
+        <p class="section-lede">
+          Why cross-tenant threat detection in SDN needs more than
+          federated averaging.
+        </p>
+      </div>
+      <div class="split-body">
+        <p>
+          Software Defined Networking (SDN) enables multi-tenant cloud
+          environments to share physical infrastructure among mutually
+          distrustful tenants, requiring collaborative yet
+          privacy-preserving threat detection. Federated Learning (FL)
+          enables joint model training without raw data sharing, but
+          existing SDN-FL approaches rarely combine a real network
+          testbed, verifiable aggregation, poisoning robustness, and
+          adaptive privacy in one framework.
+        </p>
+        <p>
+          This work proposes <strong>TrustFed-SDN</strong> — a federated
+          learning framework validated on a real Mininet+OVS+RYU SDN
+          testbed, providing lightweight verifiable aggregation,
+          trimmed-mean/clustering-based poisoning robustness, and
+          adaptive per-tenant differential privacy for cross-tenant
+          intrusion detection.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ METHODOLOGY ============ -->
+  <section class="section alt" id="methodology">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="section-title">Methodology</h2>
+        <p class="section-lede">
+          A multi-tenant SDN testbed feeding a federated learning and
+          trust layer.
+        </p>
+      </div>
+
+      <div class="diagram-block">
+        <div class="diagram-frame">
+          <img src="images/TrustFed_SDN_Methodology.png" alt="TrustFed-SDN system architecture diagram" loading="lazy">
+        </div>
+        <div class="diagram-desc">
+          <p>
+            Each tenant runs an isolated set of virtual machines — an
+            attack source, benign traffic, and a victim/server — behind
+            its own vSwitch and RYU controller instance. Flow features
+            extracted at the switch are trained locally with a GRU
+            model, then passed through an adaptive differential-privacy
+            layer before being committed, verified, and robustly
+            aggregated into a single global model.
+          </p>
+          <ul class="check-list">
+            <li>Genuine hypervisor-level tenant isolation, not a shared-kernel emulation</li>
+            <li>Per-tenant local training on non-IID, top-k selected flow features</li>
+            <li>Hash-commitment verification before any update is aggregated</li>
+            <li>Global model redistributed to every tenant's RYU controller each round</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORKFLOW ============ -->
+  <section class="section" id="workflow">
+    <div class="section-inner">
+      <div class="section-head workflow-head">
+        <h2 class="section-title">Workflow</h2>
+      </div>
+
+      <div class="diagram-block reverse workflow-block">
+        <div class="diagram-frame narrow">
+          <img src="images/TrustFed-Workflow.png" alt="TrustFed-SDN end-to-end workflow diagram" loading="lazy">
+        </div>
+        <div class="diagram-desc">
+          <p class="section-lede workflow-lede">
+            One federated round, from raw traffic to a deployed detector.
+          </p>
+          <p>
+            Every round moves through six stages: flow features are
+            collected from each tenant's SDN switch, reduced to the
+            most relevant per-attack-class features, trained locally on
+            the client side, then privacy-noised and securely
+            aggregated on the server side before the updated global
+            model is verified and pushed back out for evaluation on
+            unseen traffic.
+          </p>
+          <ol class="step-list">
+            <li><span>Data collection</span> — flow features from InSDN, CICIDS2017/2019</li>
+            <li><span>Preprocessing</span> — per-tenant non-IID partition, top-k selection</li>
+            <li><span>Local training</span> — per-tenant GRU, local model update</li>
+            <li><span>Privacy &amp; security</span> — adaptive DP, commitment, robust aggregation</li>
+            <li><span>Global model update</span> — verified aggregation, redistribution</li>
+            <li><span>Evaluation</span> — accuracy, latency, robustness on unseen traffic</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REFERENCES ============ -->
+  <section class="section alt" id="references">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="section-title">References</h2>
+        <p class="section-lede">
+          The prior work TrustFed-SDN builds on and positions itself
+          against. Select any entry to open its DOI.
+        </p>
+      </div>
+
+      <div class="ref-list">
+
+        <a class="ref-row" href="https://doi.org/10.3390/s26030890" target="_blank" rel="noopener">
+          <span class="ref-index">01</span>
+          <span class="ref-body">
+            <span class="ref-title">Privacy Protection Optimization Method for Cloud Platforms Based on Federated
+              Learning and Homomorphic Encryption</span>
+            <span class="ref-meta">J. Wang &amp; Y. Wang &middot; Sensors, vol. 26, no. 3, p. 890 &middot; 2026</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row" href="https://doi.org/10.1109/ICNC59896.2024.10556115" target="_blank" rel="noopener">
+          <span class="ref-index">02</span>
+          <span class="ref-body">
+            <span class="ref-title">Federated Learning-Based Solution for DDoS Detection in SDN</span>
+            <span class="ref-meta">J. Mateus &amp; G.-A. Lusilao Zodi &middot; Proc. ICNC, Cape Town &middot;
+              2024</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row" href="https://doi.org/10.1109/TIFS.2022.3227435" target="_blank" rel="noopener">
+          <span class="ref-index">03</span>
+          <span class="ref-body">
+            <span class="ref-title">Privacy-Preserving and Verifiable Federated Learning Framework for Edge
+              Computing</span>
+            <span class="ref-meta">H. Zhou, G. Yang, Y. Huang, H. Dai &amp; Y. Xiang &middot; IEEE Trans. Inf. Forensics
+              Secur., vol. 18, pp. 565&ndash;580 &middot; 2023</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row" href="https://doi.org/10.1109/JRFID.2023.3279329" target="_blank" rel="noopener">
+          <span class="ref-index">04</span>
+          <span class="ref-body">
+            <span class="ref-title">SDN-Based Federated Learning Approach for Satellite-IoT Framework to Enhance Data
+              Security and Privacy in Space Communication</span>
+            <span class="ref-meta">R. Uddin &amp; S. A. P. Kumar &middot; IEEE J. Radio Freq. Identif., vol. 7, pp.
+              424&ndash;440 &middot; 2023</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row ref-extra" href="https://doi.org/10.3390/app13031431" target="_blank" rel="noopener">
+          <span class="ref-index">05</span>
+          <span class="ref-body">
+            <span class="ref-title">Low Rate DDoS Detection Using Weighted Federated Learning in SDN Control Plane in
+              IoT Network</span>
+            <span class="ref-meta">M. N. Ali, M. Imran, M. S. ud din &amp; B.-S. Kim &middot; Appl. Sci., vol. 13, no.
+              3, p. 1431 &middot; 2023</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row ref-extra" href="https://doi.org/10.1109/TNSE.2021.3050781" target="_blank" rel="noopener">
+          <span class="ref-index">06</span>
+          <span class="ref-body">
+            <span class="ref-title">VFChain: Enabling Verifiable and Auditable Federated Learning via Blockchain
+              Systems</span>
+            <span class="ref-meta">Z. Peng, J. Xu, X. Chu, S. Gao, Y. Yao, R. Gu &amp; Y. Tang &middot; IEEE Trans.
+              Netw. Sci. Eng., vol. 9, no. 1, pp. 173&ndash;186 &middot; 2022</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row ref-extra" href="https://doi.org/10.1109/OJCOMS.2025.3644477" target="_blank" rel="noopener">
+          <span class="ref-index">07</span>
+          <span class="ref-body">
+            <span class="ref-title">A Survey on Security and Privacy in Federated Learning-Based Intrusion Detection
+              Systems for 5G and Beyond Networks</span>
+            <span class="ref-meta">H. Rezaei, R. Taheri, E. Nowroozi, M. Hajizadeh, S. Shiaeles &amp; T. Bauschert
+              &middot; IEEE Open J. Commun. Soc., vol. 7, pp. 253&ndash;300 &middot; 2026</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+        <a class="ref-row ref-extra" href="https://doi.org/10.1007/s44443-026-00625-6" target="_blank" rel="noopener">
+          <span class="ref-index">08</span>
+          <span class="ref-body">
+            <span class="ref-title">Collaborative Intrusion Detection Systems in SD-WAN Enterprise Networks with
+              Federated Learning: A Comprehensive Survey</span>
+            <span class="ref-meta">W. Almuseelem &middot; J. King Saud Univ. Comput. Inf. Sci., vol. 38, p. 379 &middot;
+              2026</span>
+          </span>
+          <span class="ref-go">DOI &rarr;</span>
+        </a>
+
+      </div>
+
+      <div class="ref-actions">
+        <button class="ref-toggle-btn" id="refToggleBtn" aria-expanded="false">
+          <span class="ref-toggle-text">See all references (8)</span>
+          <svg class="ref-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TEAM ============ -->
+  <section class="section" id="team">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 class="section-title">The Team</h2>
+        <p class="section-lede">
+          The people behind TrustFed-SDN.
+        </p>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-photo-frame">
+            <div class="team-photo-ring"></div>
+            <div class="team-photo-circle">
+              <img src="images/profiles/Pritom_Kumar.png?v=2" alt="Pritom Kumar Bhowmik">
+            </div>
+            <span class="team-verified-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+                <path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <span class="team-role">Researcher</span>
+          <h3 class="team-name">Pritom Kumar Bhowmik</h3>
+          <p class="team-id">Student ID 2101005</p>
+          <p class="team-desc">
+            Department of Internet of Things &amp; Robotics Engineering,
+            University of Frontier Technology, Bangladesh.
+          </p>
+        </div>
+
+        <div class="team-card">
+          <div class="team-photo-frame">
+            <div class="team-photo-ring"></div>
+            <div class="team-photo-circle">
+              <img src="images/profiles/MD_NAIMUR_RASHID.png?v=2" alt="MD Naimur Rashid">
+            </div>
+            <span class="team-verified-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+                <path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <span class="team-role">Researcher</span>
+          <h3 class="team-name">MD Naimur Rashid</h3>
+          <p class="team-id">Student ID 2101042</p>
+          <p class="team-desc">
+            Department of Internet of Things &amp; Robotics Engineering,
+            University of Frontier Technology, Bangladesh.
+          </p>
+        </div>
+
+        <div class="team-card highlight">
+          <div class="team-photo-frame">
+            <div class="team-photo-ring"></div>
+            <div class="team-photo-circle">
+              <img src="images/profiles/Sourav_Chandra_Das.png?v=3" alt="Saurav Chandra Das">
+            </div>
+            <span class="team-verified-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+                <path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <span class="team-role">Supervisor</span>
+          <h3 class="team-name">Saurav Chandra Das</h3>
+          <p class="team-id">Lecturer, Department of IRE</p>
+          <p class="team-desc">
+            University of Frontier Technology, Bangladesh &mdash;
+            supervising this thesis project.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="UFTB" class="footer-logo">
+        <div>
+          <p class="footer-title">TrustFed-SDN</p>
+          <p class="footer-sub">Department of Internet of Things &amp; Robotics Engineering</p>
+        </div>
+      </div>
+      <p class="footer-copy">&copy; MD Naimur Rashid, 2026</p>
+    </div>
+  </footer>
+
+  <!-- Floating Glassmorphic Scroll to Top Button -->
+  <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <script src="js/particles.js"></script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>
