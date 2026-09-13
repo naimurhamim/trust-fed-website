@@ -95,6 +95,30 @@ li { margin-bottom: 0.5em; }
 }
 .btn-ghost:hover { border-color: var(--accent-2); }
 
+.btn-poster {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 122, 26, 0.45);
+  color: #FFFFFF;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.btn-poster:hover {
+  background: rgba(255, 122, 26, 0.15);
+  border-color: var(--accent-2);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 122, 26, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btn-poster .btn-arrow-icon {
+  opacity: 0.65;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.btn-poster:hover .btn-arrow-icon {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
 /* ============ NAV ============ */
 .nav {
   position: fixed;
@@ -1114,8 +1138,22 @@ li { margin-bottom: 0.5em; }
   border-color: var(--accent-2);
 }
 
+/* Light: btn-poster */
+:root[data-theme="light"] .btn-poster {
+  background: #FFFFFF;
+  border-color: rgba(255, 122, 26, 0.4);
+  color: var(--text);
+  box-shadow: 0 4px 16px rgba(20, 20, 29, 0.06);
+}
+:root[data-theme="light"] .btn-poster:hover {
+  background: rgba(255, 122, 26, 0.08);
+  border-color: var(--accent-2);
+  color: var(--accent-1);
+  box-shadow: 0 6px 20px rgba(255, 122, 26, 0.18);
+}
+
 /* Light: transition for smooth theme switch */
-body, .nav-links, .scroll-top-btn, .theme-toggle-btn, .ref-toggle-btn,
+body, .nav-links, .scroll-top-btn, .theme-toggle-btn, .ref-toggle-btn, .btn, .btn-poster,
 .hero, .section, .card, .team-card, .fact-item,
 .diagram-frame, .ref-row, .footer, .badge {
   transition:
