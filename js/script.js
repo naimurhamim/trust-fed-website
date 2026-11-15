@@ -85,6 +85,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const setActiveNavUI = (pageNum) => {
+    const padNum = String(pageNum).padStart(2, "0");
+    const cur = chapterMeta(pageNum);
+
+    tocItems.forEach((btn) => {
+      const isMatch = Number(btn.dataset.goto) === pageNum;
+      btn.classList.toggle("active", isMatch);
+      if (isMatch && isScrollMode) {
+        const navWrap = btn.closest(".book-sidebar");
+        if (navWrap && navWrap.scrollHeight > navWrap.clientHeight) {
+          btn.scrollIntoView({ block: "nearest" });
+        }
+      }
+    });
+    pagePips.forEach((pip) => {
+      pip.classList.toggle("active", Number(pip.dataset.goto) === pageNum);
+    });
+
+    if (chapterReadout) {
+      chapterReadout.textContent = isScrollMode
+        ? `Scroll All · Ch. ${padNum} / ${chapters.length} · ${cur.title}`
+        : `Chapter ${padNum} / ${chapters.length} · ${cur.title}`;
+    }
+    if (folioLeft) {
+      folioLeft.textContent = `TRUSTFED-SDN MONOGRAPH // CH. ${padNum} · ${cur.title.toUpperCase()}`;
+    }
+  };
+
   const renderPage = (targetPage, opts = {}) => {
     const prevPage = currentPage;
     const clamped = Math.max(1, Math.min(chapters.length, targetPage));
@@ -104,24 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    tocItems.forEach((btn) => {
-      btn.classList.toggle("active", Number(btn.dataset.goto) === currentPage);
-    });
-    pagePips.forEach((pip) => {
-      pip.classList.toggle("active", Number(pip.dataset.goto) === currentPage);
-    });
-
-    const cur = chapterMeta(currentPage);
+    setActiveNavUI(currentPage);
     const padCur = String(currentPage).padStart(2, "0");
-
-    if (chapterReadout) {
-      chapterReadout.textContent = isScrollMode
-        ? "All 10 Chapters · Continuous Monograph View"
-        : `Chapter ${padCur} / ${chapters.length} · ${cur.title}`;
-    }
-    if (folioLeft) {
-      folioLeft.textContent = `TRUSTFED-SDN MONOGRAPH // CH. ${padCur} · ${cur.title.toUpperCase()}`;
-    }
 
     // Update top & bottom Prev/Next controls
     const hasPrev = currentPage > 1;
@@ -164,6 +176,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const syncActiveChapterFromScroll = () => {
+    if (!isScrollMode || !chapters.length) return;
+    let activeNum = 1;
+    const scrollBottom = window.innerHeight + window.scrollY;
+    const docHeight = document.documentElement.scrollHeight;
+
+    if (window.scrollY <= 8) {
+      activeNum = 1;
+    } else if (scrollBottom >= docHeight - 6) {
+      activeNum = chapters.length;
+    } else {
+      const topbar = document.querySelector(".topbar");
+      const topbarH = topbar ? topbar.getBoundingClientRect().height : 62;
+      const triggerY = topbarH + Math.min(180, Math.round(window.innerHeight * 0.25));
+      for (let i = 0; i < chapters.length; i += 1) {
+        const rect = chapters[i].getBoundingClientRect();
+        if (rect.top <= triggerY) {
+          activeNum = i + 1;
+        } else {
+          break;
+        }
+      }
+    }
+
+    if (activeNum !== currentPage) {
+      currentPage = activeNum;
+      setActiveNavUI(activeNum);
+      const padCur = String(activeNum).padStart(2, "0");
+      history.replaceState(null, "", `#ch${padCur}`);
+    } else {
+      setActiveNavUI(activeNum);
+    }
+  };
+
   const applyReadingMode = (scrollOn) => {
     isScrollMode = scrollOn;
     body.classList.toggle("scroll-mode", isScrollMode);
@@ -172,7 +218,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modeLabelEl) {
       modeLabelEl.textContent = isScrollMode ? "Book Pages" : "Scroll All";
     }
-    renderPage(currentPage, { animate: false, scroll: false, skipHash: true });
+    renderPage(currentPage, { animate: false, scroll: isScrollMode && currentPage > 1, skipHash: true });
+    if (isScrollMode) {
+      requestAnimationFrame(syncActiveChapterFromScroll);
+    }
   };
 
   if (modeToggleBtn) {
@@ -242,9 +291,18 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPage(resolveHash(), { skipHash: true });
   });
 
-  window.addEventListener("scroll", () => {
-    if (isScrollMode) updateProgressBar();
-  }, { passive: true });
+  let scrollSpyRaf = null;
+  const onScrollUpdate = () => {
+    if (!isScrollMode) return;
+    if (scrollSpyRaf) return;
+    scrollSpyRaf = requestAnimationFrame(() => {
+      scrollSpyRaf = null;
+      updateProgressBar();
+      syncActiveChapterFromScroll();
+    });
+  };
+  window.addEventListener("scroll", onScrollUpdate, { passive: true });
+  window.addEventListener("resize", onScrollUpdate, { passive: true });
 
   /* ---------- 5. Full-Screen Figure Lightbox Modal ---------- */
   const lightbox = document.getElementById("lightboxModal");

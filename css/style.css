@@ -556,6 +556,7 @@ button { font-family: inherit; }
 body.scroll-mode .chapter-page {
   display: block;
   border-bottom: 1px solid var(--border);
+  scroll-margin-top: calc(var(--topbar-h, 62px) + 16px);
 }
 
 body.scroll-mode .chapter-page:last-of-type {
@@ -1543,6 +1544,30 @@ table.data-table tr.row-highlight {
   text-align: center;
   font-size: 0.75rem;
   color: var(--text-faint);
+}
+
+.site-credit-bar {
+  padding: 14px 28px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-1);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--text-dim);
+}
+
+.site-credit-bar a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.14s ease, border-color 0.14s ease;
+}
+
+.site-credit-bar a:hover {
+  color: var(--accent-2);
+  border-bottom-color: var(--accent-2);
 }
 
 /* ============================================================================
