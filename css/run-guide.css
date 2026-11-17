@@ -7,7 +7,7 @@
   width: 100%;
   margin: 0 auto;
   padding: calc(var(--topbar-h) + 28px) 24px 40px;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .guide-hero {

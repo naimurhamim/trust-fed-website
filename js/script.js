@@ -95,7 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isMatch && isScrollMode) {
         const navWrap = btn.closest(".book-sidebar");
         if (navWrap && navWrap.scrollHeight > navWrap.clientHeight) {
-          btn.scrollIntoView({ block: "nearest" });
+          const itemTop = btn.offsetTop;
+          const itemBot = itemTop + btn.offsetHeight;
+          if (itemTop < navWrap.scrollTop) {
+            navWrap.scrollTop = Math.max(0, itemTop - 8);
+          } else if (itemBot > navWrap.scrollTop + navWrap.clientHeight) {
+            navWrap.scrollTop = itemBot - navWrap.clientHeight + 8;
+          }
         }
       }
     });

@@ -72,9 +72,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Reading progress + active step highlight */
   const progressFill = document.getElementById("readProgressFill");
+  const jumpBar = document.querySelector(".step-jump");
   const sections = Array.from(document.querySelectorAll(".guide-step[id]"));
   const jumpLinks = Array.from(document.querySelectorAll(".step-jump a"));
+  let lastActiveId = "";
   let raf = null;
+
+  const syncJumpBarHorizontal = (linkEl) => {
+    if (!jumpBar || !linkEl || jumpBar.scrollWidth <= jumpBar.clientWidth) return;
+    const targetLeft = linkEl.offsetLeft - (jumpBar.clientWidth - linkEl.offsetWidth) / 2;
+    jumpBar.scrollTo({ left: Math.max(0, targetLeft), behavior: "smooth" });
+  };
 
   const onScroll = () => {
     if (raf) return;
@@ -90,14 +98,19 @@ document.addEventListener("DOMContentLoaded", () => {
       sections.forEach((sec) => {
         if (sec.getBoundingClientRect().top <= trigger) activeId = sec.id;
       });
-      if (window.scrollY >= maxScroll - 4 && sections.length) {
+      if (maxScroll > 0 && window.scrollY >= maxScroll - 4 && sections.length) {
         activeId = sections[sections.length - 1].id;
       }
-      jumpLinks.forEach((a) => {
-        const on = a.getAttribute("href") === `#${activeId}`;
-        a.classList.toggle("active", on);
-        if (on) a.scrollIntoView({ block: "nearest", inline: "nearest" });
-      });
+      if (activeId !== lastActiveId) {
+        lastActiveId = activeId;
+        let activeLink = null;
+        jumpLinks.forEach((a) => {
+          const on = a.getAttribute("href") === `#${activeId}`;
+          a.classList.toggle("active", on);
+          if (on) activeLink = a;
+        });
+        syncJumpBarHorizontal(activeLink);
+      }
     });
   };
   window.addEventListener("scroll", onScroll, { passive: true });
