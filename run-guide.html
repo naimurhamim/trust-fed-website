@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Testbed Run Guide — TrustFed-SDN</title>
+  <meta name="description"
+    content="Step-by-step guide to run the TrustFed-SDN multi-tenant SDN testbed (Mininet + Open vSwitch + OS-Ken) on Ubuntu 22.04 with verified terminal outputs.">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/run-guide.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+    })();
+  </script>
+</head>
+
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ============ TOP HEADER ============ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <a href="index.html" class="brand-link">
+          <img src="images/logo.png" alt="TrustFed-SDN Mark" class="brand-logo" data-brand-logo>
+          <span>TrustFed<span class="brand-accent">-SDN</span></span>
+        </a>
+        <span class="edition-pill">Run Guide</span>
+      </div>
+
+      <div class="topbar-center">
+        <span class="chapter-readout">Live Ubuntu SDN Testbed · Step-by-Step</span>
+      </div>
+
+      <div class="topbar-right">
+        <a href="index.html" class="pill-btn">Back to Monograph</a>
+        <a href="https://github.com/naimurhamim/TrustFed-SDN" target="_blank" rel="noopener"
+          class="pill-btn hide-mobile">GitHub</a>
+        <button id="themeToggleBtn" class="icon-btn" type="button" aria-label="Toggle light and dark theme"
+          title="Toggle light/dark theme">
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="read-progress-track">
+      <div id="readProgressFill" class="read-progress-fill"></div>
+    </div>
+  </header>
+
+  <main class="guide-shell">
+
+    <!-- ============ HERO ============ -->
+    <section class="guide-hero">
+      <span class="guide-kicker">Live Multi-Tenant SDN Testbed Walkthrough</span>
+      <h1 class="guide-title">Run TrustFed-SDN on Ubuntu: Tenants, Isolation, Attack &amp; OVS Mitigation</h1>
+      <p class="guide-lede">
+        Verified step-by-step commands and observed terminal outputs for the L1 multi-tenant SDN testbed. Each step
+        shows what the command does, the command itself, what the output means, and the real screenshot.
+      </p>
+      <div class="env-chips">
+        <span class="env-chip">Ubuntu 22.04 LTS</span>
+        <span class="env-chip">Mininet 2.3.0</span>
+        <span class="env-chip">Open vSwitch 2.17.12</span>
+        <span class="env-chip">OS-Ken 3.0.1 (OpenFlow 1.3)</span>
+        <span class="env-chip">3 Tenants · 4 Switches · 9 Hosts</span>
+      </div>
+    </section>
+
+    <!-- ============ STEP JUMP NAV ============ -->
+    <nav class="step-jump" aria-label="Jump to step">
+      <a href="#topology">Topology</a>
+      <a href="#step1">01 · Setup Check</a>
+      <a href="#step2">02 · Controllers &amp; Mininet</a>
+      <a href="#step3">03 · Isolation</a>
+      <a href="#step4">04 · Attack</a>
+      <a href="#step5">05 · Mitigation</a>
+      <a href="#step6">06 · Cleanup</a>
+      <a href="#step7">07 · One-Command Run</a>
+    </nav>
+
+    <!-- ============ TOPOLOGY ============ -->
+    <section class="guide-step" id="topology">
+      <div class="guide-step-head">
+        <span class="guide-step-num">MAP</span>
+        <h2>Topology &amp; Tenant Address Map</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tenant</th>
+              <th>Subnet</th>
+              <th>Switch</th>
+              <th>Controller (Port)</th>
+              <th>Benign</th>
+              <th>Victim</th>
+              <th>Attacker</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tenant 1 — Finance</td>
+              <td><code>10.10.1.0/24</code></td>
+              <td><code>s1</code></td>
+              <td><code>c1</code> (6653)</td>
+              <td><code>h1_ben</code> .1.10</td>
+              <td><code>h1_vic</code> .1.50</td>
+              <td><code>h1_atk</code> .1.100</td>
+            </tr>
+            <tr>
+              <td>Tenant 2 — Healthcare</td>
+              <td><code>10.10.2.0/24</code></td>
+              <td><code>s2</code></td>
+              <td><code>c2</code> (6654)</td>
+              <td><code>h2_ben</code> .2.10</td>
+              <td><code>h2_vic</code> .2.50</td>
+              <td><code>h2_atk</code> .2.100</td>
+            </tr>
+            <tr>
+              <td>Tenant 3 — Education</td>
+              <td><code>10.10.3.0/24</code></td>
+              <td><code>s3</code></td>
+              <td><code>c3</code> (6655)</td>
+              <td><code>h3_ben</code> .3.10</td>
+              <td><code>h3_vic</code> .3.50</td>
+              <td><code>h3_atk</code> .3.100</td>
+            </tr>
+            <tr>
+              <td>Core Policy Switch</td>
+              <td>—</td>
+              <td><code>s0</code></td>
+              <td>Static OVS rules</td>
+              <td colspan="3">Drops all cross-tenant IP/ARP traffic at <code>priority=200</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ STEP 1 ============ -->
+    <section class="guide-step" id="step1">
+      <div class="guide-step-head">
+        <span class="guide-step-num">01</span>
+        <h2>Verify Project Directory &amp; Controller Virtualenv</h2>
+        <span class="guide-step-where">Terminal 1 · bash</span>
+      </div>
+      <div class="step-split">
+        <div class="step-text">
+          <span class="label">Purpose</span>
+          <p>Confirm the repository root (<code>~/Desktop/TrustFed-SDN</code>) and the OS-Ken Python virtualenv
+            (<code>~/Desktop/.venv-ryu</code>) exist.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>bash</span><button class="copy-btn" type="button"
+                data-copy-target="cmd1">Copy</button></div>
+            <pre id="cmd1"># Move into Desktop/TrustFed-SDN and check for .venv-ryu and .git
+cd ~/Desktop/TrustFed-SDN
+ls -ld .venv-ryu ~/Desktop/.venv-ryu .git 2&gt;/dev/null || true
+ls -la</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> The full codebase, <code>.git</code> history,
+            and <code>/home/ubuntu/Desktop/.venv-ryu</code> controller environment are present.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 1 — Directory and Virtualenv Check">
+              <img src="images/live-demo/step00_env_check.png" alt="Step 1 directory and virtualenv check" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>Repository files and .venv-ryu located</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 2 ============ -->
+    <section class="guide-step" id="step2">
+      <div class="guide-step-head">
+        <span class="guide-step-num">02</span>
+        <h2>Launch 3 OS-Ken Controllers &amp; Multi-Tenant Mininet</h2>
+        <span class="guide-step-where">Terminal 1 · bash → mininet&gt;</span>
+      </div>
+      <div class="step-split">
+        <div class="step-text">
+          <span class="label">Purpose</span>
+          <p>Clean stale state, start three OpenFlow 1.3 controllers on ports 6653–6655, and boot the 3-tenant
+            Mininet + OVS topology in interactive CLI mode.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>bash</span><button class="copy-btn" type="button"
+                data-copy-target="cmd2">Copy</button></div>
+            <pre id="cmd2"># Move to TrustFed-SDN folder and point to existing OS-Ken virtualenv
+cd ~/Desktop/TrustFed-SDN
+RYU_VENV="$HOME/Desktop/.venv-ryu"
+
+# Clean up any leftover controllers, Mininet hosts, or OVS bridges
+pkill -f osken-manager || true
+sudo systemctl start openvswitch-switch
+sudo mn -c
+for br in s0 s1 s2 s3; do sudo ovs-vsctl --if-exists del-br "$br"; done
+
+# Create a fresh empty dynamic blocklist file
+rm -f /tmp/trustfed_blocklist.json /tmp/c1.log /tmp/c2.log /tmp/c3.log /tmp/of_stats_t*.jsonl
+echo "[]" &gt; /tmp/trustfed_blocklist.json
+
+# Start 3 isolated OS-Ken OpenFlow 1.3 controllers (ports 6653, 6654, 6655)
+for idx in 1 2 3; do
+  port=$((6652 + idx))
+  TENANT_BLOCKLIST_JSON=/tmp/trustfed_blocklist.json \
+  TENANT_STATS_POLL_SEC=0.5 \
+  TENANT_FLOW_STATS_LOG="/tmp/of_stats_t${idx}.jsonl" \
+    "$RYU_VENV/bin/osken-manager" --ofp-tcp-listen-port "$port" \
+    testbed/ryu_apps/tenant_controller_13.py &gt; "/tmp/c${idx}.log" 2&gt;&amp;1 &amp;
+done
+
+# Verify all 3 controllers are listening before starting Mininet
+sleep 3
+for port in 6653 6654 6655; do
+  "$RYU_VENV/bin/python" -c "import socket; s=socket.create_connection(('127.0.0.1', $port), 1.0); s.close(); print('Controller ready on port', $port)"
+done
+
+# Start the 3-tenant Mininet + OVS topology in interactive CLI mode
+SYS_SITE=$(python3 -c 'import site; print(":".join(site.getsitepackages()))')
+sudo env PYTHONPATH="$PWD:$SYS_SITE" "$RYU_VENV/bin/python" testbed/topology/multi_tenant_topo.py --cli</pre>
+          </div>
+          <span class="label">At the mininet&gt; prompt</span>
+          <div class="code-card">
+            <div class="code-card-head"><span>mininet&gt;</span><button class="copy-btn" type="button"
+                data-copy-target="cmd2b">Copy</button></div>
+            <pre id="cmd2b">nodes
+net</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> All 3 controllers listen on 6653, 6654, 6655,
+            and 4 switches (<code>s0</code>–<code>s3</code>) plus 9 tenant hosts are connected.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 2 — Controllers Ready and Mininet Topology">
+              <img src="images/live-demo/step01_controllers_and_topology.png"
+                alt="Step 2 controllers ready and Mininet topology" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>Controllers ready · nodes and links listed</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 3 ============ -->
+    <section class="guide-step" id="step3">
+      <div class="guide-step-head">
+        <span class="guide-step-num">03</span>
+        <h2>Verify Tenant Isolation &amp; Pre-Mitigation Baseline</h2>
+        <span class="guide-step-where">Terminal 1 · mininet&gt;</span>
+      </div>
+      <div class="step-split">
+        <div class="step-text">
+          <span class="label">Purpose</span>
+          <p>Test intra-tenant reachability, confirm core switch <code>s0</code> blocks cross-tenant traffic, and
+            check that both benign and attacker hosts reach the victim before mitigation.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>mininet&gt;</span><button class="copy-btn" type="button"
+                data-copy-target="cmd3">Copy</button></div>
+            <pre id="cmd3">h1_ben ping -c 2 h1_vic
+h1_ben ip route replace 10.10.2.0/24 dev h1_ben-eth0
+h1_ben ping -c 2 -W 1 h2_vic
+h1_ben ip route del 10.10.2.0/24 dev h1_ben-eth0
+h2_ben ping -c 2 h2_vic
+h2_atk ping -c 2 h2_vic</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> Same-tenant ping gives 0% loss, cross-tenant
+            ping gives 100% loss (blocked by <code>s0</code>), and inside Tenant 2 both <code>h2_ben</code> and
+            <code>h2_atk</code> initially reach <code>h2_vic</code>.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 3 — Isolation and Pre-Attack Baseline">
+              <img src="images/live-demo/step02_isolation_and_pre_attack.png"
+                alt="Step 3 intra-tenant, cross-tenant isolation, and pre-attack baseline" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>0% intra-tenant loss · 100% cross-tenant loss</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 4 ============ -->
+    <section class="guide-step" id="step4">
+      <div class="guide-step-head">
+        <span class="guide-step-num">04</span>
+        <h2>Generate a Guarded SYN Flood &amp; Inspect OVS Flows</h2>
+        <span class="guide-step-where">Terminal 1 + Terminal 2</span>
+      </div>
+
+      <div class="step-split">
+        <div class="step-text">
+          <h3 class="guide-sub">4A · Victim service and attack burst (Terminal 1)</h3>
+          <span class="label">Purpose</span>
+          <p>Start an HTTP service on <code>h2_vic:8080</code> and send a 100-event TCP SYN flood from
+            <code>h2_atk</code> to <code>10.10.2.50</code>.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>mininet&gt;</span><button class="copy-btn" type="button"
+                data-copy-target="cmd4a">Copy</button></div>
+            <pre id="cmd4a">h2_vic python3 -m http.server 8080 &gt; /tmp/vic_http.log 2&gt;&amp;1 &amp;
+h2_atk env PYTHONPATH=. python3 testbed/traffic/attack_traffic.py --target 10.10.2.50 --tenant tenant_2_healthcare --attack-type syn_flood --count 100</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> The safety guard confirms the target is inside
+            <code>tenant_2_healthcare</code> (10.10.2.0/24), then 100 SYN flood events complete.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 4A — Live SYN Flood Execution">
+              <img src="images/live-demo/step03a_syn_flood_attack.png" alt="Step 4A live SYN flood execution"
+                loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>[SAFETY GUARD OK] · events=100</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="step-split">
+        <div class="step-text">
+          <h3 class="guide-sub">4B · Inspect OpenFlow 1.3 attack flows (Terminal 2)</h3>
+          <span class="label">Purpose</span>
+          <p>Open a second terminal tab and dump the flow table of switch <code>s2</code>.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>bash</span><button class="copy-btn" type="button"
+                data-copy-target="cmd4b">Copy</button></div>
+            <pre id="cmd4b"># Dump active OpenFlow 1.3 flows on Tenant 2 switch s2
+sudo ovs-ofctl -O OpenFlow13 dump-flows s2</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> Controller <code>c2</code> installed
+            <code>priority=10</code> TCP 5-tuple rules (<code>10.10.2.100 → 10.10.2.50:8080</code>) for each
+            flood connection.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 4B — OpenFlow 1.3 Flows During Attack">
+              <img src="images/live-demo/step03b_ovs_attack_flows.png" alt="Step 4B OpenFlow flows during attack"
+                loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>Per-connection priority=10 flows on s2</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 5 ============ -->
+    <section class="guide-step" id="step5">
+      <div class="guide-step-head">
+        <span class="guide-step-num">05</span>
+        <h2>Enforce priority=300 Mitigation &amp; Verify Selective Blocking</h2>
+        <span class="guide-step-where">Terminal 2 + Terminal 1</span>
+      </div>
+
+      <div class="step-split">
+        <div class="step-text">
+          <h3 class="guide-sub">5A · Install the drop rule and check counters (Terminal 2)</h3>
+          <span class="label">Purpose</span>
+          <p>Install a temporary <code>priority=300</code> drop rule for attacker <code>10.10.2.100</code> on
+            <code>s2</code>, then check its packet counter before and after Step 5B.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>bash</span><button class="copy-btn" type="button"
+                data-copy-target="cmd5a">Copy</button></div>
+            <pre id="cmd5a"># Install priority=300 OpenFlow 1.3 DROP rule for attacker 10.10.2.100 on switch s2
+sudo ovs-ofctl -O OpenFlow13 add-flow s2 "priority=300,idle_timeout=300,hard_timeout=600,ip,nw_src=10.10.2.100,actions=drop"
+
+# Verify the rule is active (n_packets=0 initially)
+sudo ovs-ofctl -O OpenFlow13 dump-flows s2 | grep "priority=300"
+
+# After Step 5B: confirm s2 dropped the attacker's packets (n_packets &gt; 0)
+sudo ovs-ofctl -O OpenFlow13 dump-flows s2 | grep "priority=300"</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> The counter starts at
+            <code>n_packets=0</code> and becomes <code>n_packets=3, n_bytes=294</code> after the attacker pings,
+            so <code>s2</code> dropped the malicious packets.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 5A — OVS Drop Rule and Packet Counter">
+              <img src="images/live-demo/step04a_ovs_drop_rule_and_counters.png"
+                alt="Step 5A OVS drop rule and incremented packet counter" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>priority=300 drop · n_packets 0 → 3</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="step-split">
+        <div class="step-text">
+          <h3 class="guide-sub">5B · Attacker blocked vs. benign user (Terminal 1)</h3>
+          <span class="label">Purpose</span>
+          <p>Ping the victim from both the attacker and the benign host while the drop rule is active.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>mininet&gt;</span><button class="copy-btn" type="button"
+                data-copy-target="cmd5b">Copy</button></div>
+            <pre id="cmd5b">h2_atk ping -c 3 -W 1 h2_vic
+h2_ben ping -c 3 -W 1 h2_vic</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> <code>h2_atk</code> gets 100% packet loss
+            (blocked), while <code>h2_ben</code> keeps 0% packet loss (no benign collateral).</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 5B — Selective Mitigation Proof">
+              <img src="images/live-demo/step04b_selective_mitigation_proof.png"
+                alt="Step 5B selective mitigation proof" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>Attacker 100% loss · benign 0% loss</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 6 ============ -->
+    <section class="guide-step" id="step6">
+      <div class="guide-step-head">
+        <span class="guide-step-num">06</span>
+        <h2>Cleanup &amp; Teardown</h2>
+        <span class="guide-step-where">Terminal 1</span>
+      </div>
+      <div class="step-split">
+        <div class="step-text">
+          <span class="label">Purpose</span>
+          <p>Exit Mininet and remove all virtual switches, namespaces, and background controllers.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>mininet&gt;</span><button class="copy-btn" type="button"
+                data-copy-target="cmd6a">Copy</button></div>
+            <pre id="cmd6a">exit</pre>
+          </div>
+        </div>
+        <div class="step-text">
+          <span class="label">Then in bash</span>
+          <div class="code-card">
+            <div class="code-card-head"><span>bash</span><button class="copy-btn" type="button"
+                data-copy-target="cmd6b">Copy</button></div>
+            <pre id="cmd6b"># Clean up Mininet virtual hosts, OVS bridges, and background controllers
+sudo mn -c
+pkill -f osken-manager || true</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> The VM network returns to a clean state with
+            no leftover bridges or controller processes.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STEP 7 ============ -->
+    <section class="guide-step" id="step7">
+      <div class="guide-step-head">
+        <span class="guide-step-num">07</span>
+        <h2>Automated One-Command Full VM Verification</h2>
+        <span class="guide-step-where">Terminal · bash</span>
+      </div>
+      <div class="step-split">
+        <div class="step-text">
+          <span class="label">Purpose</span>
+          <p>Link <code>~/Desktop/.venv-ryu</code> into the project and run the full Step 08 script across all
+            three tenants: isolation, controller memory, drop-rule latency, selective blocking, and TTL expiry.</p>
+          <div class="code-card">
+            <div class="code-card-head"><span>bash</span><button class="copy-btn" type="button"
+                data-copy-target="cmd7">Copy</button></div>
+            <pre id="cmd7"># Link existing Desktop/.venv-ryu inside TrustFed-SDN and verify required packages
+cd ~/Desktop/TrustFed-SDN
+ln -sfn "$HOME/Desktop/.venv-ryu" .venv-ryu
+.venv-ryu/bin/python -c "import os_ken, numpy; print('venv-ryu ready')"
+
+# Run the one-command Step 08 live VM mitigation &amp; responsiveness test
+sudo bash scripts/run_step08_vm_testbed.sh</pre>
+          </div>
+          <div class="meaning-box"><strong>Output meaning:</strong> 18/18 intra-tenant probes pass (0% loss), 6/6
+            cross-tenant probes are blocked, controllers use about 67.2 MB, mean drop-rule install is
+            29.071 ms, 3/3 attackers are blocked with 0% false benign blocks, TTL expiry works, and the summary is
+            saved to <code>results/08_live/vm_live_mitigation.json</code>.</div>
+        </div>
+        <div class="shot-col">
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 7 — One-Command Startup and Isolation">
+              <img src="images/live-demo/step06a_auto_vm_script_start.png"
+                alt="Step 7 one-command VM testbed startup and isolation output" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>Controllers, isolation baseline, 5-stage driver</figcaption>
+          </figure>
+          <figure class="shot-card">
+            <div class="shot-frame" data-title="Step 7 — Mitigation Summary JSON">
+              <img src="images/live-demo/step06b_auto_vm_script_summary.png"
+                alt="Step 7 one-command VM mitigation summary JSON" loading="lazy">
+              <span class="zoom-chip">Click to enlarge</span>
+            </div>
+            <figcaption>100% attack block · 0% false block · TTL expiry true</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <div class="guide-footer-nav">
+      <a href="index.html" class="btn btn-outline">Back to Monograph</a>
+      <a href="index.html#ch07" class="btn btn-primary">Open Ch. 07: Live SDN Results</a>
+    </div>
+  </main>
+
+  <div class="site-credit-bar">
+    &copy; <a href="https://naimurrashid.dev/" target="_blank" rel="noopener">MD Naimur Rashid</a> | 2026
+  </div>
+
+  <!-- ============ SCREENSHOT LIGHTBOX ============ -->
+  <div id="lightboxModal" class="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
+    <div class="lightbox-card">
+      <div class="lightbox-head">
+        <span id="lightboxTitle" class="lightbox-title">Screenshot</span>
+        <button id="lightboxCloseBtn" class="mini-nav-btn" type="button">
+          <span>Close</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="lightbox-body">
+        <img id="lightboxImg" src="" alt="Expanded screenshot">
+      </div>
+    </div>
+  </div>
+
+  <script src="js/run-guide.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,285 @@
+/* ============================================================================
+   TrustFed-SDN — Live Testbed Run Guide page (extends css/style.css tokens)
+   ============================================================================ */
+
+.guide-shell {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: calc(var(--topbar-h) + 28px) 24px 40px;
+}
+
+.guide-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--book-shadow);
+  padding: 30px 34px;
+  margin-bottom: 22px;
+}
+
+.guide-kicker {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin-bottom: 8px;
+}
+
+.guide-title {
+  margin: 0 0 10px;
+  font-family: var(--font-head);
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.guide-lede {
+  margin: 0 0 18px;
+  max-width: 860px;
+  color: var(--text-dim);
+  font-size: 0.96rem;
+}
+
+.env-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.env-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+/* Step jump navigation */
+.step-jump {
+  position: sticky;
+  top: calc(var(--topbar-h) + 8px);
+  z-index: 50;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px;
+  margin-bottom: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  scrollbar-width: thin;
+}
+
+.step-jump a {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  padding: 6px 11px;
+  border-radius: 6px;
+  color: var(--text-dim);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.step-jump a:hover,
+.step-jump a.active {
+  color: var(--text);
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+.step-jump a.active { color: var(--accent-2); }
+
+/* Step cards: instructions left, screenshot right */
+.guide-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--book-shadow);
+  padding: 24px 26px;
+  margin-bottom: 20px;
+  scroll-margin-top: calc(var(--topbar-h) + 70px);
+}
+
+.guide-step-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.guide-step-num {
+  flex-shrink: 0;
+  min-width: 42px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-2);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guide-step-head h2 {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 1.12rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.guide-step-where {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.guide-sub {
+  margin: 18px 0 10px;
+  font-family: var(--font-head);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.guide-sub:first-of-type { margin-top: 0; }
+
+.step-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.step-split + .step-split {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+
+.step-text .label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+
+.step-text p {
+  margin: 0 0 12px;
+  font-size: 0.89rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.step-text .code-card { margin: 4px 0 14px; }
+
+.step-text .code-card pre { font-size: 0.76rem; max-height: 420px; }
+
+.meaning-box {
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.meaning-box strong { color: var(--accent-green); }
+
+.shot-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: calc(var(--topbar-h) + 72px);
+}
+
+.shot-card {
+  margin: 0;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.shot-frame {
+  position: relative;
+  cursor: zoom-in;
+  background: #0b0d12;
+}
+
+.shot-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.shot-frame .zoom-chip {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(9, 11, 16, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E2E8F0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.shot-frame:hover .zoom-chip { opacity: 1; }
+
+.shot-card figcaption {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  color: var(--text-dim);
+}
+
+/* Tenant map table reuse */
+.guide-step .table-wrap { margin: 0; }
+
+.guide-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@media (max-width: 1040px) {
+  .step-split { grid-template-columns: 1fr; }
+  .shot-col { position: static; }
+}
+
+@media (max-width: 768px) {
+  .guide-shell { padding: calc(var(--topbar-h) + 16px) 12px 28px; }
+  .guide-hero, .guide-step { padding: 18px 16px; }
+  .guide-step-where { display: none; }
+  .guide-step-head h2 { font-size: 1rem; }
+}
