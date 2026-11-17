@@ -1624,7 +1624,9 @@ table.data-table tr.row-highlight {
 
 .lightbox-body img {
   max-height: 74vh;
+  max-width: 100%;
   width: auto;
+  height: auto;
   object-fit: contain;
 }
 
@@ -1797,7 +1799,41 @@ table.data-table tr.row-highlight {
   }
 }
 
+@media (max-width: 540px) {
+  .topbar-inner {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .topbar-left, .topbar-right {
+    gap: 5px;
+  }
+  .brand-link {
+    font-size: 0.90rem;
+    gap: 6px;
+  }
+  .brand-logo {
+    width: 22px;
+    height: 22px;
+  }
+  .pill-btn {
+    padding: 5px 9px;
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+  .pill-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 @media (max-width: 480px) {
+  .hide-xs {
+    display: none !important;
+  }
   .kpi-grid,
   .grid-3 {
     grid-template-columns: 1fr;
